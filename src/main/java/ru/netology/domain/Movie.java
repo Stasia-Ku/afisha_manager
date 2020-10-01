@@ -37,6 +37,11 @@ public class Movie {
     public void setGenre(String genre) {
         this.genre = genre;
     }
+
+    public Movie(String id, String imageUrl, String name, String genre) {
+        this.id = id;
+        this.imageUrl = imageUrl;
+        this.name = name;
+        this.genre = genre;
+    }
 }
-
-
