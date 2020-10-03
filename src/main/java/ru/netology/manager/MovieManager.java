@@ -1,26 +1,28 @@
 package ru.netology.manager;
 
 import ru.netology.domain.Movie;
-import java.util.*;
+import ru.netology.repository.MovieRepository;
 
 public class MovieManager {
-    private Movie[] movies = new Movie[0];
+    private MovieRepository repository;
+
+    public MovieManager (MovieRepository repository) {
+        this.repository = repository;
+    }
 
     public void addMovie(String id, String imageUrl, String name, String genre) {
         Movie newMovie = new Movie(id, imageUrl, name, genre);
-
-        Movie[] newArray = Arrays.copyOf(this.movies, this.movies.length + 1);
-        newArray[this.movies.length] = newMovie;
-        this.movies = newArray;
+        repository.save(newMovie);
     }
 
     public Movie[] getLastMovies(int countOfMovies) {
-        if (countOfMovies > this.movies.length) { countOfMovies = this.movies.length; }
+        int length = this.repository.findAll().length;
+        if (countOfMovies > length) { countOfMovies = length; }
 
         Movie[] result = new Movie[countOfMovies];
 
-        for(int i = this.movies.length - 1; i >= this.movies.length - countOfMovies; i--) {
-            result[this.movies.length - i - 1] = movies[i];
+        for(int i = length - 1; i >= length - countOfMovies; i--) {
+            result[length - i - 1] = this.repository.findAll()[i];
         }
 
         return result;

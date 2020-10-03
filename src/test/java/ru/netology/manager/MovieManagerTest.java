@@ -1,164 +1,60 @@
 package ru.netology.manager;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import ru.netology.domain.Movie;
+import ru.netology.repository.MovieRepository;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.mockito.Mockito.*;
 
-class MovieManagerTest {
+@ExtendWith(MockitoExtension.class)
+class MovieManagerTestNonEmpty {
+    @Mock
+    private MovieRepository repository;
+    @InjectMocks
+    private MovieManager manager;
+    private Movie movie1 = new Movie("1", "/image/1.jpg", "MovieName", "Comedy");
+    private Movie movie2 = new Movie("2", "/image/2.jpg", "MovieName2", "Comedy");
+    private Movie movie3 = new Movie("3", "/image/3.jpg", "MovieName3", "Comedy");
+    private Movie movie4 = new Movie("4", "/image/4.jpg", "MovieName4", "Comedy");
+    private Movie movie5 = new Movie("5", "/image/5.jpg", "MovieName5", "Comedy");
+    private Movie movie6 = new Movie("6", "/image/6.jpg", "MovieName6", "Comedy");
+    private Movie movie7 = new Movie("7", "/image/7.jpg", "MovieName7", "Comedy");
+    private Movie movie8 = new Movie("8", "/image/8.jpg", "MovieName8", "Comedy");
+    private Movie movie9 = new Movie("9", "/image/9.jpg", "MovieName9", "Comedy");
+    private Movie movie10 = new Movie("10", "/image/10.jpg", "MovieName10", "Comedy");
 
-    @Test
-    void addMovieTest() {
-        Movie movie = new Movie("1","/image/1.jpg", "MovieName", "Comedy");
-        MovieManager movieManager = new MovieManager();
-
-        movieManager.addMovie(movie.getId(), movie.getImageUrl(), movie.getName(), movie.getGenre());
-        movieManager.getLastMovies(1);
-
-        assertEquals(movieManager.getLastMovies(1)[0].getId(), movie.getId());
-        assertEquals(movieManager.getLastMovies(1)[0].getImageUrl(), movie.getImageUrl());
-        assertEquals(movieManager.getLastMovies(1)[0].getName(), movie.getName());
-        assertEquals(movieManager.getLastMovies(1)[0].getGenre(), movie.getGenre());
+    @BeforeEach
+    public void setUp() {
+        manager.addMovie(movie1.getId(), movie1.getImageUrl(), movie1.getName(), movie1.getGenre());
+        manager.addMovie(movie2.getId(), movie2.getImageUrl(), movie2.getName(), movie2.getGenre());
+        manager.addMovie(movie3.getId(), movie3.getImageUrl(), movie3.getName(), movie3.getGenre());
+        manager.addMovie(movie4.getId(), movie4.getImageUrl(), movie4.getName(), movie4.getGenre());
+        manager.addMovie(movie5.getId(), movie5.getImageUrl(), movie5.getName(), movie5.getGenre());
+        manager.addMovie(movie6.getId(), movie6.getImageUrl(), movie6.getName(), movie6.getGenre());
+        manager.addMovie(movie7.getId(), movie7.getImageUrl(), movie7.getName(), movie7.getGenre());
+        manager.addMovie(movie8.getId(), movie8.getImageUrl(), movie8.getName(), movie8.getGenre());
+        manager.addMovie(movie9.getId(), movie9.getImageUrl(), movie9.getName(), movie9.getGenre());
+        manager.addMovie(movie10.getId(), movie10.getImageUrl(), movie10.getName(), movie10.getGenre());
     }
 
     @Test
-    void getLastMoviesNormalTest() {
-        MovieManager movieManager = new MovieManager();
-        movieManager.addMovie("1", "/image/1.jpg", "MovieName", "Comedy");
-        movieManager.addMovie("2", "/image/2.jpg", "MovieName2", "Comedy");
-        movieManager.addMovie("3", "/image/3.jpg", "MovieName3", "Comedy");
-        movieManager.addMovie("4", "/image/4.jpg", "MovieName4", "Comedy");
-        movieManager.addMovie("5", "/image/5.jpg", "MovieName5", "Comedy");
-        movieManager.addMovie("6", "/image/6.jpg", "MovieName6", "Comedy");
-        movieManager.addMovie("7", "/image/7.jpg", "MovieName7", "Comedy");
-        movieManager.addMovie("8", "/image/8.jpg", "MovieName8", "Comedy");
-        movieManager.addMovie("9", "/image/9.jpg", "MovieName9", "Comedy");
-        movieManager.addMovie("10", "/image/10.jpg", "MovieName10", "Comedy");
+    public void shouldGetLastMovies() {
+        String idToRemove = "10";
 
-        Movie[] lastMovies;
+        Movie[] returned = new Movie[]{movie1, movie2, movie3, movie4, movie5, movie6, movie7, movie8, movie9};
+        doReturn(returned).when(repository).findAll();
+        doNothing().when(repository).removeById(idToRemove);
 
-        lastMovies = movieManager.getLastMovies(10);
+        Movie[] expected = new Movie[]{movie5, movie6, movie7, movie8, movie9};
+        Movie[] actual = manager.getLastMovies(5);
+        assertArrayEquals(expected, actual);
 
-        assertEquals(lastMovies[0].getId(), "10");
-        assertEquals(lastMovies[0].getImageUrl(), "/image/10.jpg");
-        assertEquals(lastMovies[0].getName(), "MovieName10");
-        assertEquals(lastMovies[0].getGenre(), "Comedy");
-
-        assertEquals(lastMovies[1].getId(), "9");
-        assertEquals(lastMovies[1].getImageUrl(), "/image/9.jpg");
-        assertEquals(lastMovies[1].getName(), "MovieName9");
-        assertEquals(lastMovies[1].getGenre(), "Comedy");
-
-        assertEquals(lastMovies[2].getId(), "8");
-        assertEquals(lastMovies[2].getImageUrl(), "/image/8.jpg");
-        assertEquals(lastMovies[2].getName(), "MovieName8");
-        assertEquals(lastMovies[2].getGenre(), "Comedy");
-
-        assertEquals(lastMovies[3].getId(), "7");
-        assertEquals(lastMovies[3].getImageUrl(), "/image/7.jpg");
-        assertEquals(lastMovies[3].getName(), "MovieName7");
-        assertEquals(lastMovies[3].getGenre(), "Comedy");
-
-        assertEquals(lastMovies[4].getId(), "6");
-        assertEquals(lastMovies[4].getImageUrl(), "/image/6.jpg");
-        assertEquals(lastMovies[4].getName(), "MovieName6");
-        assertEquals(lastMovies[4].getGenre(), "Comedy");
-
-        assertEquals(lastMovies[5].getId(), "5");
-        assertEquals(lastMovies[5].getImageUrl(), "/image/5.jpg");
-        assertEquals(lastMovies[5].getName(), "MovieName5");
-        assertEquals(lastMovies[5].getGenre(), "Comedy");
-
-        assertEquals(lastMovies[6].getId(), "4");
-        assertEquals(lastMovies[6].getImageUrl(), "/image/4.jpg");
-        assertEquals(lastMovies[6].getName(), "MovieName4");
-        assertEquals(lastMovies[6].getGenre(), "Comedy");
-
-        assertEquals(lastMovies[7].getId(), "3");
-        assertEquals(lastMovies[7].getImageUrl(), "/image/3.jpg");
-        assertEquals(lastMovies[7].getName(), "MovieName3");
-        assertEquals(lastMovies[7].getGenre(), "Comedy");
-
-        assertEquals(lastMovies[8].getId(), "2");
-        assertEquals(lastMovies[8].getImageUrl(), "/image/2.jpg");
-        assertEquals(lastMovies[8].getName(), "MovieName2");
-        assertEquals(lastMovies[8].getGenre(), "Comedy");
-
-        assertEquals(lastMovies[9].getId(), "1");
-        assertEquals(lastMovies[9].getImageUrl(), "/image/1.jpg");
-        assertEquals(lastMovies[9].getName(), "MovieName");
-        assertEquals(lastMovies[9].getGenre(), "Comedy");
-    }
-
-    @Test
-    void getLastMoviesOverTest() {
-        MovieManager movieManager = new MovieManager();
-        movieManager.addMovie("1", "/image/1.jpg", "MovieName", "Comedy");
-        movieManager.addMovie("2", "/image/2.jpg", "MovieName2", "Comedy");
-        movieManager.addMovie("3", "/image/3.jpg", "MovieName3", "Comedy");
-        movieManager.addMovie("4", "/image/4.jpg", "MovieName4", "Comedy");
-        movieManager.addMovie("5", "/image/5.jpg", "MovieName5", "Comedy");
-        movieManager.addMovie("6", "/image/6.jpg", "MovieName6", "Comedy");
-        movieManager.addMovie("7", "/image/7.jpg", "MovieName7", "Comedy");
-        movieManager.addMovie("8", "/image/8.jpg", "MovieName8", "Comedy");
-        movieManager.addMovie("9", "/image/9.jpg", "MovieName9", "Comedy");
-        movieManager.addMovie("10", "/image/10.jpg", "MovieName10", "Comedy");
-
-        Movie[] lastMovies;
-
-        lastMovies = movieManager.getLastMovies(12);
-
-        assertEquals(lastMovies.length, 10);
-
-        assertEquals(lastMovies[0].getId(), "10");
-        assertEquals(lastMovies[0].getImageUrl(), "/image/10.jpg");
-        assertEquals(lastMovies[0].getName(), "MovieName10");
-        assertEquals(lastMovies[0].getGenre(), "Comedy");
-
-        assertEquals(lastMovies[1].getId(), "9");
-        assertEquals(lastMovies[1].getImageUrl(), "/image/9.jpg");
-        assertEquals(lastMovies[1].getName(), "MovieName9");
-        assertEquals(lastMovies[1].getGenre(), "Comedy");
-
-        assertEquals(lastMovies[2].getId(), "8");
-        assertEquals(lastMovies[2].getImageUrl(), "/image/8.jpg");
-        assertEquals(lastMovies[2].getName(), "MovieName8");
-        assertEquals(lastMovies[2].getGenre(), "Comedy");
-
-        assertEquals(lastMovies[3].getId(), "7");
-        assertEquals(lastMovies[3].getImageUrl(), "/image/7.jpg");
-        assertEquals(lastMovies[3].getName(), "MovieName7");
-        assertEquals(lastMovies[3].getGenre(), "Comedy");
-
-        assertEquals(lastMovies[4].getId(), "6");
-        assertEquals(lastMovies[4].getImageUrl(), "/image/6.jpg");
-        assertEquals(lastMovies[4].getName(), "MovieName6");
-        assertEquals(lastMovies[4].getGenre(), "Comedy");
-
-        assertEquals(lastMovies[5].getId(), "5");
-        assertEquals(lastMovies[5].getImageUrl(), "/image/5.jpg");
-        assertEquals(lastMovies[5].getName(), "MovieName5");
-        assertEquals(lastMovies[5].getGenre(), "Comedy");
-
-        assertEquals(lastMovies[6].getId(), "4");
-        assertEquals(lastMovies[6].getImageUrl(), "/image/4.jpg");
-        assertEquals(lastMovies[6].getName(), "MovieName4");
-        assertEquals(lastMovies[6].getGenre(), "Comedy");
-
-        assertEquals(lastMovies[7].getId(), "3");
-        assertEquals(lastMovies[7].getImageUrl(), "/image/3.jpg");
-        assertEquals(lastMovies[7].getName(), "MovieName3");
-        assertEquals(lastMovies[7].getGenre(), "Comedy");
-
-        assertEquals(lastMovies[8].getId(), "2");
-        assertEquals(lastMovies[8].getImageUrl(), "/image/2.jpg");
-        assertEquals(lastMovies[8].getName(), "MovieName2");
-        assertEquals(lastMovies[8].getGenre(), "Comedy");
-
-        assertEquals(lastMovies[9].getId(), "1");
-        assertEquals(lastMovies[9].getImageUrl(), "/image/1.jpg");
-        assertEquals(lastMovies[9].getName(), "MovieName");
-        assertEquals(lastMovies[9].getGenre(), "Comedy");
+        verify(repository).removeById(idToRemove);
     }
 }
